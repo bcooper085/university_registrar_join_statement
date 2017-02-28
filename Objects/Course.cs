@@ -142,7 +142,64 @@ namespace Registrar
       }
       return foundCourse;
     }
+    public void AddStudent(Student newStudent)
+    {
+        SqlConnection conn = DB.Connection();
+        conn.Open();
 
+        SqlCommand cmd = new SqlCommand("INSERT INTO courses_students (course_id, student_id) VALUES (@CourseId, @StudentId);", conn);
+        SqlParameter courseIdParameter = new SqlParameter();
+        courseIdParameter.ParameterName = "@CourseId";
+        courseIdParameter.Value = this.GetId();
+        cmd.Parameters.Add(courseIdParameter);
+
+        SqlParameter studentIdParameter = new SqlParameter();
+        studentIdParameter.ParameterName = "@StudentId";
+        studentIdParameter.Value = newStudent.GetId();
+        cmd.Parameters.Add(studentIdParameter);
+
+        cmd.ExecuteNonQuery();
+
+        if (conn != null)
+        {
+            conn.Close();
+        }
+    }
+
+    public List<Student> GetStudents()
+    {
+        SqlConnection conn = DB.Connection();
+        conn.Open();
+
+        SqlCommand cmd = new SqlCommand("SELECT students.* FROM courses JOIN courses_students ON (courses.id = courses_students.course_id) JOIN students ON (courses_students.student_id = students.id) WHERE courses.id = @CourseId", conn);
+        SqlParameter courseIdParameter = new SqlParameter();
+        courseIdParameter.ParameterName = "@CourseId";
+        courseIdParameter.Value = this.GetId().ToString();
+
+        cmd.Parameters.Add(courseIdParameter);
+
+        SqlDataReader rdr = cmd.ExecuteReader();
+
+        List<Student> students = new List<Student>{};
+
+        while(rdr.Read())
+        {
+          int studentThisId = rdr.GetInt32(0);
+          string studentName = rdr.GetString(1);
+          DateTime studentEnrollment = rdr.GetDateTime(2);
+          Student foundStudent = new Student(studentName, studentEnrollment, studentThisId);
+          students.Add(foundStudent);
+        }
+        if (rdr != null)
+        {
+            rdr.Close();
+        }
+        if (conn != null)
+        {
+            conn.Close();
+        }
+        return students;
+    }
 
     public void Delete()
     {
