@@ -1,0 +1,20 @@
+@{
+  Layout="Shared/_Layout.cshtml";
+}
+<h3>All Students</h3>
+@if (@Model.Count == 0)
+{
+  <p>There are no students yet.</p>
+}
+<ul>
+  @foreach (var student in Model)
+  {
+    <li><a href="/students/@student.GetId()">@student.GetName()</a></li>
+  }
+</ul>
+<h3>Add Student</h3>
+<form action="/student/form" method="post">
+  <input type="text" name="name" placeholder="Student Name">
+  <input type="date" value='now' name="enrollment_date" placeholder="Enrollment Date">
+  <button type="submit" name="button">Add Course</button>
+</form>

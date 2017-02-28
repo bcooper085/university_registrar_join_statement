@@ -68,6 +68,31 @@ namespace Registrar
     }
 
     [Fact]
+    public void Test_AddCourse_AddsCourseToStudent()
+    {
+        //Arrange
+      DateTime date1 = new DateTime(2008, 4, 10);
+      Student testStudent = new Student("Brandon", date1);
+      testStudent.Save();
+
+      Course testCourse1 = new Course("History", "HIST200");
+      testCourse1.Save();
+
+      Course testCourse2 = new Course("Spanish", "SPAN200");
+      testCourse2.Save();
+
+      //Act
+      testStudent.AddCourse(testCourse1);
+      testStudent.AddCourse(testCourse2);
+
+      List<Course> result = testStudent.GetCourses();
+      List<Course> testList = new List<Course>{testCourse1, testCourse2};
+
+      //Assert
+      Assert.Equal(testList, result);
+    }
+
+    [Fact]
     public void Test_Delete_DeletesStudentFromDatabase()
     {
       //Arrange
